@@ -3,9 +3,12 @@ import axios from 'axios'
 import { use, useState, useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { AppSkeleton } from '@/app/components/skeletons'
+import { RecommendAppSkeleton, FreeAppSkeleton } from '@/app/components/skeletons'
 import { Suspense } from 'react'
 import AppData from './type/appData'
+import { StarSolid } from './ui/solidIcon'
+import { StarOutline } from './ui/outlineIcon'
+
 // import { SearchIcon } from 'lucide-react'
 
 interface ItemsList {
@@ -114,23 +117,43 @@ function FreeList(props: ItemsList) {
 
     return (
         <>
-            <div className="grid gap-4 p-4">
+            <div className="grid p-4">
                 {mergedArray.map((item, i) => (
                     <Link key={i} href={item.link}>
-                        <div className="flex">
-                            <p>{i + 1}</p>
+                        <div className="flex items-center border-b border-gray-200 py-4 gap-3">
+                            <p className="text-gray-400 text-xl">{i + 1}</p>
                             <Image
                                 src={item.image}
                                 height={80}
                                 width={80}
-                                className="rounded-full mb-2"
+                                className="rounded-full shrink-0"
                                 alt={item.title}
                             ></Image>
                             <div>
                                 <p className="line-clamp-2 font-medium">{item.title}</p>
                                 <p className="text-gray-500">{item.category}</p>
-                                <div>
-                                    {item.rate}+ {item.count}
+                                <div className="text-gray-500 flex items-center gap-2">
+                                    <div className="flex">
+                                        {item.rate ? (
+                                            <>
+                                                {Array.from({ length: Math.round(Number(item.rate)) }).map((_, i) => (
+                                                    <StarSolid className="size-4 text-orange-400" key={i} />
+                                                ))}
+                                                {Array.from({ length: 5 - Math.round(Number(item.rate)) }).map(
+                                                    (_, i) => (
+                                                        <StarOutline className="size-4 text-orange-400" key={i} />
+                                                    )
+                                                )}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {Array.from({ length: 5 }).map((_, i) => (
+                                                    <StarOutline className="size-4 text-orange-400" key={i} />
+                                                ))}
+                                            </>
+                                        )}
+                                    </div>
+                                    ({item.rate ? Number(item.count).toLocaleString() : 0})
                                 </div>
                             </div>
                         </div>
@@ -171,8 +194,11 @@ export default function Home() {
                 />
             </div>
             <div className="h-[56px]"></div>
-            <Suspense fallback={<AppSkeleton />}>{<RecommendList query={query} data={dataRecommend} />}</Suspense>
-            <Suspense fallback={<AppSkeleton />}>{<FreeList query={query} data={dataFree} />}</Suspense>
+            <Suspense fallback={<RecommendAppSkeleton />}>
+                {<RecommendList query={query} data={dataRecommend} />}
+            </Suspense>
+            {/* <FreeAppSkeleton /> */}
+            <Suspense fallback={<FreeAppSkeleton />}>{<FreeList query={query} data={dataFree} />}</Suspense>
         </div>
     )
 }
