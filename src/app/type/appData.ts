@@ -63,7 +63,7 @@ interface ReleaseDate {
     }
 }
 
-export default interface AppData {
+interface AppData {
     'im:name': {
         label: string
     }
@@ -83,3 +83,26 @@ export default interface AppData {
     category: Category
     'im:releaseDate': ReleaseDate
 }
+
+interface FreeType {
+    id: string
+    title: string
+    image: string
+    category: string
+    link: string
+}
+
+interface DetailType {
+    id: string
+    count: string
+    rate: string
+}
+
+interface ItemsList {
+    query: string
+    data: Promise<AppData[]>
+}
+
+type MergedType = FreeType & Partial<DetailType>
+
+export type { AppData, ItemsList, MergedType, DetailType }
